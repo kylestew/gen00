@@ -5,18 +5,28 @@ import {
   minor7th,
 } from "@generative-music/utilities";
 
+import b3 from "./assets/samples/sso-cor-anglais/b3.wav";
+import b4 from "./assets/samples/sso-cor-anglais/b4.wav";
+import d4 from "./assets/samples/sso-cor-anglais/d4.wav";
+import d5 from "./assets/samples/sso-cor-anglais/d5.wav";
+import f3 from "./assets/samples/sso-cor-anglais/f3.wav";
+import f4 from "./assets/samples/sso-cor-anglais/f4.wav";
+import f5 from "./assets/samples/sso-cor-anglais/f5.wav";
+import gsharp3 from "./assets/samples/sso-cor-anglais/gsharp3.wav";
+import gsharp4 from "./assets/samples/sso-cor-anglais/gsharp4.wav";
+
 const activate = async () => {
   const sampler = await createPitchShiftedSampler({
     samplesByNote: {
-      B3: "./assets/samples/sso-cor-anglais/b3.wav",
-      B4: "./assets/samples/sso-cor-anglais/b4.wav",
-      D4: "./assets/samples/sso-cor-anglais/d4.wav",
-      D5: "./assets/samples/sso-cor-anglais/d5.wav",
-      F3: "./assets/samples/sso-cor-anglais/f3.wav",
-      F4: "./assets/samples/sso-cor-anglais/f4.wav",
-      F5: "./assets/samples/sso-cor-anglais/f5.wav",
-      "G#3": "./assets/samples/sso-cor-anglais/gsharp3.wav",
-      "G#4": "./assets/samples/sso-cor-anglais/gsharp4.wav",
+      B3: b3,
+      B4: b4,
+      D4: d4,
+      D5: d5,
+      F3: f3,
+      F4: f4,
+      F5: f5,
+      "G#3": gsharp3,
+      "G#4": gsharp4,
     },
     pitchShift: -24,
     attack: 5,
