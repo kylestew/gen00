@@ -11,6 +11,7 @@
     "vite": "^2.8.0"
   },
   "dependencies": {
+    "@generative-music/utilities": "^5.2.0",
     "tone": "^14.8.37"
   }
 }
