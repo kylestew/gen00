@@ -34,14 +34,21 @@ const activate = async () => {
     curve: "linear",
     baseUrl: "./assets/samples/sso-cor-anglais/",
   });
+  statusLine.innerHTML +=
+    "<br/>loading samples (chorus, pitched shifted by -24 semitones?)";
 
   const delayVolume = new Tone.Volume(-28);
   const compressor = new Tone.Compressor();
 
   const notes = toss(["A#"], [3, 4]).map(minor7th).flat();
 
+  statusLine.innerHTML += "pick two root notes: " + toss(["A#"], [3, 4]);
+  statusLine.innerHTML += "<br/>make two minor 7th chords: " + notes;
+  statusLine.innerHTML +=
+    "<br/>these are the notes we will randomly select from";
+
   const playChord = (first = false) => {
-    console.log("playing chord");
+    statusLine.innerHTML += "<br/>=== preparing chord ===";
 
     // grab up to 4 notes
     let chord = notes.filter(() => Math.random() < 0.5).slice(0, 4);
@@ -49,6 +56,7 @@ const activate = async () => {
     while (first && chord.length === 0) {
       chord = notes.filter(() => Math.random() < 0.5).slice(0, 4);
     }
+    statusLine.innerHTML += "<br/>grabbing up to 4 random notes: " + chord;
 
     // select note that MUST play on new chord start
     const immediateNoteIndex = first
@@ -60,7 +68,10 @@ const activate = async () => {
       // if not initial note, randomly space out start times
       const time = `+${immediateNoteIndex === i ? 0 : Math.random() * 2}`;
       sampler.triggerAttack(note, time);
+      statusLine.innerHTML += "<br/>play " + note + " at " + time;
     });
+
+    statusLine.innerHTML += "<br/>====================";
 
     // schedule next chord
     Tone.Transport.scheduleOnce(() => {
@@ -85,11 +96,16 @@ const activate = async () => {
   });
 };
 
+const statusLine = document.getElementById("status");
+statusLine.innerHTML = "tap play to start generating sound";
+
 document.getElementById("play")?.addEventListener("click", async () => {
   await Tone.start();
+  statusLine.innerHTML = "starting...";
   activate();
 });
 
 document.getElementById("stop")?.addEventListener("click", async () => {
+  statusLine.innerHTML = "";
   Tone.Transport.stop();
 });
