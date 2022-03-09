@@ -34,8 +34,9 @@ const phrases = [
 ];
 
 export default class Music {
-  constructor() {
+  constructor(scheduleEvent) {
     this._prepSamples();
+    this.scheduleEvent = scheduleEvent;
   }
 
   _prepSamples() {
@@ -109,8 +110,8 @@ export default class Music {
         );
         this.trumpet.triggerAttackRelease(`${pc}${trumpetOct}`, duration);
 
-        Tone.Draw.schedule(function () {
-          // animations.schedule("trumpet", pc, time, duration);
+        Tone.Draw.schedule(() => {
+          this.scheduleEvent("trumpet", pc, time, duration);
         }, time);
       }, trumpetScheduleFor);
 
@@ -122,8 +123,8 @@ export default class Music {
         );
         this.trombone.triggerAttackRelease(`${pc}${trumpetOct}`, duration);
 
-        Tone.Draw.schedule(function () {
-          // animations.schedule("trombone", pc, time, duration);
+        Tone.Draw.schedule(() => {
+          this.scheduleEvent("trombone", pc, time, duration);
         }, time);
       }, tromboneScheduledFor);
     });

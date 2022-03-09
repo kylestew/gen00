@@ -1,11 +1,13 @@
 import "./style.css";
 
-import Music from "./src/music";
-const music = new Music();
+import Visuals from "./src/visual";
+const canvasElement = document.getElementById("canvas");
+const visuals = new Visuals(canvasElement);
 
-// import createAnimations from "./src/visual";
-// const canvasElement = document.getElementById("canvas");
-// const animations = createAnimations(canvasElement);
+import Music from "./src/music";
+const music = new Music((...args) => {
+  visuals.scheduleEvent(...args);
+});
 
 const playButton = document.getElementById("play");
 playButton?.addEventListener("click", async () => {
@@ -13,6 +15,8 @@ playButton?.addEventListener("click", async () => {
 
   music.load();
   music.play();
+
+  visuals.loop();
 
   setInterval(() => {
     playButton?.remove();

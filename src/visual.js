@@ -1,25 +1,32 @@
 import * as Tone from "tone";
 
-const createAnimations = function (canvasElement) {
-  const ctx = canvasElement.getContext("2d");
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+export default class Visuals {
+  constructor(canvasElement) {
+    const ctx = canvasElement.getContext("2d");
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
 
-  var animations = [];
+    this.ctx = ctx;
+    this.events = [];
+  }
 
-  const schedule = (instrument, note, time, duration) => {
-    animations.push({
+  scheduleEvent(instrument, note, time, duration) {
+    this.events.push({
       state: "scheduled",
       instrument,
       note,
       time,
       duration: duration + 1.0,
     });
-    console.log(animations);
-  };
+    console.log(this.events);
+  }
 
-  const loop = () => {
-    requestAnimationFrame(loop);
+  loop() {
+    requestAnimationFrame(() => {
+      this.loop();
+    });
+
+    const ctx = this.ctx;
 
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
@@ -32,12 +39,12 @@ const createAnimations = function (canvasElement) {
 
     const time = Tone.now();
 
-    animations.forEach((anim) => {
-      if (anim.state == "scheduled") {
-        anim.state = "running";
+    this.events.forEach((event) => {
+      if (event.state == "scheduled") {
+        event.state = "running";
       }
 
-      const perc = Math.min((time - anim.time) / anim.duration, 1);
+      const perc = Math.min((time - event.time) / event.duration, 1);
 
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
       ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
@@ -49,20 +56,11 @@ const createAnimations = function (canvasElement) {
       ctx.fill();
       ctx.stroke();
 
-      if (anim.time + anim.duration < time) {
-        anim.state = "finished";
+      if (event.time + event.duration < time) {
+        event.state = "finished";
       }
-
-      console.log(perc, anim);
     });
 
-    animations = animations.filter((anim) => anim.state != "finished");
-  };
-
-  return {
-    schedule,
-    loop,
-  };
-};
-
-export default createAnimations;
+    this.events = this.events.filter((event) => event.state != "finished");
+  }
+}
