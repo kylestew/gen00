@@ -13,8 +13,8 @@ const playButton = document.getElementById("play");
 playButton?.addEventListener("click", async () => {
   playButton.value = "LOADING...";
 
-  music.load();
-  music.play();
+  await music.load();
+  await music.play();
 
   visuals.loop();
 
