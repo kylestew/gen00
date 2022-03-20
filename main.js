@@ -14,8 +14,9 @@ playButton?.addEventListener("click", async () => {
   playButton.value = "LOADING...";
 
   await music.load();
-  await music.play();
+  await visuals.load();
 
+  await music.play();
   visuals.loop();
 
   setInterval(() => {
