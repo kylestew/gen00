@@ -56,17 +56,17 @@ export default class Music {
 
     let note = chord[0];
     let i = 0;
-    // chord.forEach((note, i) => {
-    const offsetTime = `+${immediateNoteIndex === i ? 0 : Math.random() * 2}`;
-    Tone.Transport.scheduleOnce((time) => {
-      console.log(note, i, offsetTime);
-      this.corAnglais.triggerAttack(note);
+    chord.forEach((note, i) => {
+      const offsetTime = `+${immediateNoteIndex === i ? 0 : Math.random() * 2}`;
+      Tone.Transport.scheduleOnce((time) => {
+        console.log(note, i, offsetTime);
+        this.corAnglais.triggerAttack(note);
 
-      Tone.Draw.schedule(() => {
-        this.scheduleEvent("anglais", note, time, 10);
-      }, time);
-    }, offsetTime);
-    // });
+        Tone.Draw.schedule(() => {
+          this.scheduleEvent("anglais", note, time, 14);
+        }, time);
+      }, offsetTime);
+    });
 
     Tone.Transport.scheduleOnce(() => {
       this._playChord();

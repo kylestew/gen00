@@ -5,6 +5,7 @@ import seq0_01 from "../assets/brains/MRI scans_0000s_0000s_0003_Layer 56.jpg";
 import seq0_02 from "../assets/brains/MRI scans_0000s_0000s_0002_Layer 57.jpg";
 import seq0_03 from "../assets/brains/MRI scans_0000s_0000s_0001_Layer 58.jpg";
 import seq0_04 from "../assets/brains/MRI scans_0000s_0000s_0000_Layer 59.jpg";
+import { lerp, clamp } from "../snod/math";
 
 const loadImage = (url) =>
   new Promise((resolve, reject) => {
@@ -35,12 +36,14 @@ export default class Visuals {
   }
 
   async load() {
-    this.seq0 = [
-      await loadImage(seq0_00),
-      await loadImage(seq0_01),
-      await loadImage(seq0_02),
-      await loadImage(seq0_03),
-      await loadImage(seq0_04),
+    this.sequences = [
+      [
+        await loadImage(seq0_00),
+        await loadImage(seq0_01),
+        await loadImage(seq0_02),
+        await loadImage(seq0_03),
+        await loadImage(seq0_04),
+      ],
     ];
   }
 
@@ -50,9 +53,14 @@ export default class Visuals {
     });
 
     const ctx = this.ctx;
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = "lighter";
 
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
+
+    const drawWidth = 272;
+    const drawHeight = 314;
 
     // clear background
     ctx.clearRect(0, 0, width, height);
@@ -62,29 +70,38 @@ export default class Visuals {
 
     const time = Tone.now();
 
-    // TODO - fade/interpolate between images
-    // blend modes? color hue shifts?
-
     this.events.forEach((event) => {
       if (event.state == "scheduled") {
         event.state = "running";
+
+        // give a random position in canvas
+        const w = parseInt(Math.random() * (width - drawWidth));
+        const h = parseInt(Math.random() * (height - drawHeight));
+        event.pos = [w, h];
       }
 
       const perc = Math.min((time - event.time) / event.duration, 1);
 
-      console.log(perc);
+      const len = this.seq0.length;
+      const idx = parseInt(lerp(0, len + 1, perc));
+      const alpha = (perc * (len + 1)) % 1;
 
-      ctx.drawImage(this.seq0[0], 0, 0, 272, 314);
+      // move positions randomly
+      // turn back on all notes
+      // add more sqeuences
 
-      //   ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      //   ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
-      //   ctx.lineWidth = 12;
-      //   // ctx.save();
+      const [w, h] = event.pos;
 
-      //   ctx.beginPath();
-      //   ctx.arc(width / 2, height / 2, 201 - 200 * perc, 0, Math.PI * 2, false);
-      //   ctx.fill();
-      //   ctx.stroke();
+      if (idx - 1 >= 0 && idx - 1 < len) {
+        // fade out previous
+        ctx.globalAlpha = 1.0 - alpha;
+        ctx.drawImage(this.seq0[idx - 1], w, h, drawWidth, drawHeight);
+      }
+      if (idx < len) {
+        // fade in new
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(this.seq0[idx], w, h, drawWidth, drawHeight);
+      }
 
       if (event.time + event.duration < time) {
         event.state = "finished";
